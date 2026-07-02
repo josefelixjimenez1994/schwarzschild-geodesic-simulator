@@ -1026,9 +1026,12 @@ def _calcular_estado_fisico(E, L, eps, radios, puntos):
         else:
             return (
                 "🟥", "CAPTURA",
-                f"Punto de retorno en r≈{pt:.2f}M; sin energía suficiente para escapar.",
-                f"La partícula alcanza un mínimo de acercamiento en r≈{pt:.2f}M "
-                f"pero no puede escapar al infinito. Termina siendo capturada.",
+                f"Punto de retorno exterior en r≈{pt:.2f}M; no puede escapar al infinito.",
+                f"La partícula solo puede moverse en la región interior al punto de retorno "
+                f"exterior r≈{pt:.2f}M. Si parte hacia fuera, alcanza ese radio máximo "
+                f"y vuelve a caer; si parte hacia dentro desde un radio menor, cae "
+                f"directamente hacia el horizonte. Como E<1, no puede escapar al infinito "
+                f"y termina siendo capturada.",
             )
 
     if eps == 1 and E2 >= 1.0 and len(puntos) >= 2:
