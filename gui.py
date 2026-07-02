@@ -943,18 +943,20 @@ def _calcular_estado_fisico(E, L, eps, radios, puntos):
         elif b < B_CRITICO:
             return (
                 "🟥", "CAPTURA",
-                "El fotón pasa demasiado cerca y atraviesa la barrera crítica.",
-                f"El potencial presenta una barrera en r≈3M. "
-                f"Como b={b:.3f} < b_c={B_CRITICO:.3f}, el fotón no supera "
-                f"la región crítica y es capturado por el agujero negro.",
+                "El fotón pasa demasiado cerca y no encuentra punto de retorno exterior.",
+                f"El potencial presenta una barrera crítica asociada a r≈3M. "
+                f"Como b={b:.3f} < b_c={B_CRITICO:.3f}, no existe un punto de retorno "
+                f"exterior capaz de invertir el movimiento radial, y el fotón acaba "
+                f"siendo capturado por el agujero negro.",
             )
         else:
             return (
                 "🟩", "DISPERSIÓN",
                 "El fotón es desviado gravitatoriamente y escapa al infinito.",
-                f"Con b={b:.3f} > b_c={B_CRITICO:.3f}, la energía supera "
-                f"la barrera del potencial. El fotón queda desviado "
-                f"gravitacionalmente pero escapa al infinito.",
+                f"Con b={b:.3f} > b_c={B_CRITICO:.3f}, el nivel E² queda por debajo "
+                f"del máximo del potencial efectivo. El fotón incidente desde el infinito "
+                f"alcanza un punto de retorno exterior, es desviado gravitatoriamente "
+                f"y vuelve a escapar al infinito.",
             )
 
     # ── Partícula masiva ───────────────────────────────────────────────────────
@@ -1029,7 +1031,20 @@ def _calcular_estado_fisico(E, L, eps, radios, puntos):
                 f"pero no puede escapar al infinito. Termina siendo capturada.",
             )
 
-    # Dos o más puntos de retorno → órbita ligada
+    if eps == 1 and E2 >= 1.0 and len(puntos) >= 2:
+        r_in, r_out = puntos[0], puntos[-1]
+        return (
+            "🟧", "BARRERA POTENCIAL",
+            f"Dos puntos de retorno delimitan una barrera entre r≈{r_in:.2f}M y r≈{r_out:.2f}M.",
+            f"Como E≥1, la región exterior se extiende hasta el infinito. "
+            f"Una partícula situada en la rama exterior r>r≈{r_out:.2f}M puede escapar "
+            f"o sufrir dispersión gravitatoria, mientras que una partícula situada en la "
+            f"rama interior 2M<r<r≈{r_in:.2f}M queda asociada a captura. "
+            f"Sin especificar r₀ y el sentido radial inicial, el explorador solo identifica "
+            f"la estructura de la barrera potencial.",
+        )
+
+    # Dos o más puntos de retorno con E² < 1 → órbita ligada
     if eps == 1 and E2 < 1.0 and len(puntos) >= 3:
         r_min_r, r_max_r = puntos[-2], puntos[-1]
     else:
